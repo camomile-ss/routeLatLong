@@ -1,7 +1,6 @@
 "use strict";
 
 /* global変数 ----------*/
-var markerDirUrl = "http://www.openlayers.org/api/img/";  // マーカの画像。openlayers2にしかないみたい。
 var map;            // マップ
 var rasterLayers;   // ラスタレイヤ（地図レイヤ）のリスト
 var rLayerNames = ["osm", "trans"];  // layer選択のselect value
@@ -10,10 +9,12 @@ var markerLayer;    // マーカレイヤ
 var markerSource;   // マーカレイヤのsource（featureのセット）
 var drawLayer;      // drawレイヤ
 var drawSource;     // drawレイヤのsource（map interaction が描画するところ）
+var draw;           // draw interaction
 var layerSelect;    // レイヤ選択メニュー
 /* 定数 ----------*/
 var prec = 10;      // 緯度経度の精度
 var mapCenter = [139.7454446554, 35.658567204];  // 中心の経度緯度（東京タワー）
+var markerDirUrl = "http://www.openlayers.org/api/img/";  // マーカの画像。openlayers2にしかないみたい。
 
 /* 四捨五入 ----------*/
 function orgRound(value, digits) {
@@ -25,7 +26,7 @@ function orgRound(value, digits) {
 function onLayerSelect(){
   var sel_layer = layerSelect.value;
   var i, ii;
-  // マップレイヤは選択したものを表示
+  // ラスタレイヤは選択したものを表示
   for (i = 0, ii = rasterLayers.length; i < ii; ++i){
     rasterLayers[i].setVisible(rLayerNames[i] === sel_layer);
   }
@@ -33,6 +34,27 @@ function onLayerSelect(){
   for (i = 0, ii = vectorLayers.length; i < ii; ++i){
     vectorLayers[i].setVisible(true);
   }
+}
+
+/* マップに draw interaction 追加 ----------*/
+function addDraw() {  
+  var pointerStyle = new ol.style.Style({     // pointer のスタイル
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ {
+      anchor: [0.5, 1],
+      opacity: 0.5,
+      src: markerDirUrl + "marker-blue.png"
+    }),
+    stroke: new ol.style.Stroke({
+      color: '#1E90FF',
+      width: 3
+    })
+  });
+  draw = new ol.interaction.Draw({
+    source: drawSource,
+    type: 'LineString',
+    style: pointerStyle
+  });
+  map.addInteraction(draw);
 }
 
 /* クリック処理 ----------*/
@@ -64,7 +86,9 @@ function onClick(evt) {
 /* マーカクリア ----------*/
 function markerClear(){
   markerSource.clear();
-  drawSource.clear();
+  map.removeInteraction(draw);  // 描画中のdrawを消す
+  drawSource.clear();  // 確定した線を消す
+  addDraw();  // draw interaction 追加しなおし
 }
 
 /* データクリア ----------*/
@@ -134,23 +158,7 @@ function loadMap(){
   //map.addControl(new ol.control.ZoomSlider());  // スライダー邪魔みたい
 
   // マップに draw interaction を追加
-  var pointerStyle = new ol.style.Style({     // pointer のスタイル
-    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ {
-      anchor: [0.5, 1],
-      opacity: 0.5,
-      src: markerDirUrl + "marker-blue.png"
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#1E90FF',
-      width: 3
-    })
-  });
-  var draw = new ol.interaction.Draw({
-    source: drawSource,
-    type: 'LineString',
-    style: pointerStyle
-  });
-  map.addInteraction(draw);
+  addDraw();
 
   // イベント処理 ----------
   // レイヤ選択
