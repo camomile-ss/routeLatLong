@@ -72,16 +72,50 @@ function onClick(evt) {
   });
   markerSource.addFeature(newFeature);
   
-  // テキスト編集
-  var lltext = document.getElementById("lltext");
-  lltext.value = lltext.value + lat + "," + lon
-                 + "," + document.getElementById("station").value
-                 + "," + document.getElementById("route").value + "\n";
+  // 表編集
+  var lltbody = document.getElementById("lltbody");
+  lltbody.innerHTML = lltbody.innerHTML
+                    + "<tr><td><div contenteditable='true'>" + lat + "</div></td>"
+                    + "<td><div contenteditable='true'>" + lon + "</div></td>"
+                    + "<td><div contenteditable='true'>" + document.getElementById("station").value + "</div></td>"
+                    + "<td><div contenteditable='true'>" + document.getElementById("route").value + "</div></td>"
+                    + "<td><input type='button' value='del' id='del-row' onclick='delRow(this)'></td></tr>"
 
-  // テキストエリアちいさかったらリサイズ
-  if(lltext.scrollHeight > lltext.offsetHeight ){
-    lltext.style.height = lltext.scrollHeight+'px';
+}
+
+function onDblclick(evt) {
+  // ダブルクリックは二重になるので表の最後の行削除
+  var lltable = document.getElementById("lltable");
+  lltable.deleteRow(-1);
+}
+
+/* 表の行削除 ----------*/
+function delRow(obj) {
+  var tr = obj.parentNode.parentNode;
+  tr.parentNode.deleteRow(tr.sectionRowIndex);
+}
+
+/* 表データのコピー ----------*/
+function copyData(sep){
+  var lltable = document.getElementById("lltable");
+  var cptext = document.getElementById("copytext");
+  cptext.value = '';
+  for (var i=0; i < lltable.rows.length; i++){
+    if (i==0){
+      cptext.value = cptext.value + lltable.rows[i].cells[0].innerText + sep
+                       + lltable.rows[i].cells[1].innerText + sep
+                       + lltable.rows[i].cells[2].innerText + sep
+                       + lltable.rows[i].cells[3].innerText + "\n"
+    }else{
+      cptext.value = cptext.value + lltable.rows[i].cells[0].firstChild.innerText + sep
+                       + lltable.rows[i].cells[1].firstChild.innerText + sep
+                       + lltable.rows[i].cells[2].firstChild.innerText + sep
+                       + lltable.rows[i].cells[3].firstChild.innerText + "\n"
+    }
   }
+  document.getElementById("copytext").select();
+  document.execCommand('copy');  // 選択範囲をクリップボードへコピー
+  cptext.style.height = cptext.scrollHeight + 'px';
 }
 
 /* マーカクリア ----------*/
@@ -94,7 +128,9 @@ function markerClear(){
 
 /* データクリア ----------*/
 function dataClear(){
-  document.getElementById("lltext").value = ""
+  document.getElementById("lltbody").innerHTML = ""
+  document.getElementById("copytext").value = "(クリップボード中継用)"
+  document.getElementById("copytext").style.height = "1em";
 }
 
 /* all クリア ----------*/
@@ -169,6 +205,7 @@ function loadMap(){
 
   // クリック処理
   map.on('click', onClick);
+  map.on('dblclick', onDblclick);
 
   // マーカクリア
   var btnMKClr = document.getElementById('mk-clr');
@@ -181,4 +218,10 @@ function loadMap(){
   // allクリア（駅名・路線名・データ）
   var btnAllClr = document.getElementById('all-clr');
   btnAllClr.addEventListener('click', allClear);
+
+  // 表のコピー
+  var btnCpcsv = document.getElementById('cp-csv');
+  btnCpcsv.addEventListener('click', function(){copyData(',')});
+  var btnCptsv = document.getElementById('cp-tsv');
+  btnCptsv.addEventListener('click', function(){copyData('\t')});
 }
