@@ -9,17 +9,18 @@
     <style>
       h1        {font-size: 14pt; margin: 0.3em}
       .a-right  {text-align: right; float: right;}
+      .del-row  {font-size: 8pt;}
       #left     {width: 70%; float: left;}
       #form     {float: left;}
       #map      {height: 1000px;}
       #right    {padding-left: 20px; float: left;}
       #names    {margin-top: 10px;}
       #cp-btns  {margin-top: 10px;}
-      #copytext {margin-top: 10px; width: 100%; height: 1em;}
+      #copytext {margin-top: 10px; width: 100%; height: 1em; color: #999999;}
       p         {margin: 0;}
       table     {font-family: "ＭＳ Ｐゴシック","ＭＳ ゴシック",sans-serif; font-size: 11pt; 
-                 border-collapse: collapse; line-height: 120%; clear: both;} 
-      table th, table td {border: solid 1px #999999; padding: 3px;}
+                 border-collapse: collapse; clear: both;}
+      table th, table td {border: solid 1px #999999;}
       table th  {background: #eeeeee; text-align:center;}
       #lat, #long {width: 7.5em;}
     </style>
@@ -67,7 +68,7 @@
           <tbody id="lltbody">
           </tbody>
         </table>
-        <textarea id="copytext">(クリップボード中継用)</textarea>
+        <textarea id="copytext" readonly>(クリップボード中継用)</textarea>
       </div>
     </div>
   </body>

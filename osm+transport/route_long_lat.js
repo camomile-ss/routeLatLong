@@ -79,7 +79,7 @@ function onClick(evt) {
                     + "<td><div contenteditable='true'>" + lon + "</div></td>"
                     + "<td><div contenteditable='true'>" + document.getElementById("station").value + "</div></td>"
                     + "<td><div contenteditable='true'>" + document.getElementById("route").value + "</div></td>"
-                    + "<td><input type='button' value='del' id='del-row' onclick='delRow(this)'></td></tr>"
+                    + "<td><input type='button' value='delete' class='del-row' onclick='delRow(this)'></td></tr>"
 
 }
 
@@ -100,22 +100,16 @@ function copyData(sep){
   var lltable = document.getElementById("lltable");
   var cptext = document.getElementById("copytext");
   cptext.value = '';
-  for (var i=0; i < lltable.rows.length; i++){
-    if (i==0){
-      cptext.value = cptext.value + lltable.rows[i].cells[0].innerText + sep
-                       + lltable.rows[i].cells[1].innerText + sep
-                       + lltable.rows[i].cells[2].innerText + sep
-                       + lltable.rows[i].cells[3].innerText + "\n"
-    }else{
-      cptext.value = cptext.value + lltable.rows[i].cells[0].firstChild.innerText + sep
-                       + lltable.rows[i].cells[1].firstChild.innerText + sep
-                       + lltable.rows[i].cells[2].firstChild.innerText + sep
-                       + lltable.rows[i].cells[3].firstChild.innerText + "\n"
-    }
+  for (var i=1; i < lltable.rows.length; i++){
+    cptext.value = cptext.value + lltable.rows[i].cells[0].firstChild.innerText + sep
+                 + lltable.rows[i].cells[1].firstChild.innerText + sep
+                 + lltable.rows[i].cells[2].firstChild.innerText + sep
+                 + lltable.rows[i].cells[3].firstChild.innerText + "\n"
   }
-  document.getElementById("copytext").select();
+  cptext.select();
   document.execCommand('copy');  // 選択範囲をクリップボードへコピー
-  cptext.style.height = cptext.scrollHeight + 'px';
+  cptext.value = "(クリップボード中継用)"  // 中継リセット
+  cptext.style.height = "1em";
 }
 
 /* マーカクリア ----------*/
