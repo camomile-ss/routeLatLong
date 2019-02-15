@@ -77,7 +77,7 @@ function onClick(evt) {
   lltbody.innerHTML = lltbody.innerHTML
                     + "<tr><td><div contenteditable='true'>" + lat + "</div></td>"
                     + "<td><div contenteditable='true'>" + lon + "</div></td>"
-                    + "<td><div contenteditable='true'>" + document.getElementById("station").value + "</div></td>"
+                    + "<td><div contenteditable='true'>" + document.getElementById("point").value + "</div></td>"
                     + "<td><div contenteditable='true'>" + document.getElementById("route").value + "</div></td>"
                     + "<td><input type='button' value='delete' class='del-row' onclick='delRow(this)'></td></tr>"
 
@@ -130,7 +130,7 @@ function dataClear(){
 /* all クリア ----------*/
 function allClear(){
   dataClear();
-  document.getElementById("station").value = "";
+  document.getElementById("point").value = "";
   document.getElementById("route").value = "";
 }
 
